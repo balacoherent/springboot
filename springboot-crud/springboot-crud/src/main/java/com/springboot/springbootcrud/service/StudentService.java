@@ -1,14 +1,17 @@
 package com.springboot.springbootcrud.service;
 
 
+import com.springboot.springbootcrud.Exception.ResourseNotFoundException;
 import com.springboot.springbootcrud.baseresponse.BaseResponse;
 import com.springboot.springbootcrud.dto.StudentDto;
 import com.springboot.springbootcrud.model.Student;
 import com.springboot.springbootcrud.repository.StudentRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -41,18 +44,32 @@ public class StudentService {
         return baseResponse;
 
     }
+    public BaseResponse deleteAll(){
+        BaseResponse baseResponse = new BaseResponse();
+        studentRepository.deleteAll();
+        baseResponse.setData();
+        baseResponse.setStatusCode("200");
+        baseResponse.setStatusMsg("Student detail deleted successfully");
+        return baseResponse;
 
+    }
     public Student getStudentById(int id){
-        return studentRepository.findById(id).orElse(null);
+        return studentRepository.findById(id).orElseThrow(()-> new ResourseNotFoundException("not found"));
 
 }
    public BaseResponse updatedetail(StudentDto studentDto){
         BaseResponse baseResponse = new BaseResponse();
-        Student existstudent = studentRepository.findById(studentDto.getId()).orElse(null);
-        existstudent.setId(studentDto.getId());
-        existstudent.setName(studentDto.getName());
-        existstudent.setAddress(studentDto.getAddress());
-        studentRepository.save(existstudent);
+       Optional<Student> existstudent = studentRepository.findById(studentDto.getId());
+    if (existstudent.isPresent()) {
+        existstudent.get().setId(studentDto.getId());
+        existstudent.get().setName(studentDto.getName());
+        existstudent.get().setAddress(studentDto.getAddress());
+        studentRepository.save(existstudent.get());
+    }
+    else
+    {
+        throw new RuntimeException("data not found");
+    }
         baseResponse.setStatusCode("200");
         baseResponse.setStatusMsg("Student updated detail successfully");
         baseResponse.setData(existstudent);

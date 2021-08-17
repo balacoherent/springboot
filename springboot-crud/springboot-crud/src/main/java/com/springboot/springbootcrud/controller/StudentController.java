@@ -21,8 +21,7 @@ public class StudentController {
     private StudentService studentService;
 
     @PostMapping("/add")
-    public BaseResponse display(@RequestBody StudentDto studentDto)
-    {
+    public BaseResponse display(@RequestBody StudentDto studentDto) {
         return studentService.adddetail(studentDto);
     }
 
@@ -46,5 +45,8 @@ public class StudentController {
 
         return studentService.deletedetail(id);
     }
-
+    @DeleteMapping("/deleteAll")
+    public BaseResponse deleteAll(){
+        return studentService.deleteAll();
+    }
 }

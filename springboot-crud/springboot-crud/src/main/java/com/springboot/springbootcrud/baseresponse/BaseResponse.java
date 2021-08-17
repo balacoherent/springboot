@@ -13,4 +13,7 @@ public class BaseResponse<T> {
     String StatusCode;
     String StatusMsg;
     private T Data;
+
+    public void setData() {
+    }
 }
